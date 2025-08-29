@@ -1,19 +1,29 @@
 import express from "express";
 import cors from "cors";
 import OpenAI from "openai";
-import dotenv from "dotenv";
 
-dotenv.config();
-
+// Railway provides environment variables automatically; no dotenv needed
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const PORT = process.env.PORT || 3001;
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+if (!process.env.OPENAI_API_KEY) {
+  console.error("⚠️ OPENAI_API_KEY is missing!");
+  process.exit(1);
+}
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 app.post("/api/translate", async (req, res) => {
   const { text, language } = req.body;
+
+  if (!text || !language) {
+    return res.status(400).json({ error: "Text and language are required" });
+  }
 
   try {
     const response = await openai.chat.completions.create({
@@ -44,14 +54,13 @@ app.post("/api/image", async (req, res) => {
   try {
     const response = await openai.images.generate({
       model: "dall-e-2",
-      prompt: prompt,
+      prompt,
       n: 1,
       size: "256x256",
       response_format: "b64_json",
     });
 
-    const imageBase64 = response.data[0].b64_json;
-    res.json({ image: imageBase64 });
+    res.json({ image: response.data[0].b64_json });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Image generation failed" });
