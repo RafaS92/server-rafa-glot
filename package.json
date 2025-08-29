@@ -11,6 +11,9 @@
     "preview": "vite preview",
     "server": "node server.js"
   },
+  "engines": {
+    "node": ">=20.19"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
