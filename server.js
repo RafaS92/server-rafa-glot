@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import OpenAI from "openai";
 
-// Railway provides environment variables automatically; no dotenv needed
+// Railway provides environment variables automatically; no dotenv neede
 const app = express();
 app.use(cors());
 app.use(express.json());
